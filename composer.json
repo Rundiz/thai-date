@@ -1,7 +1,7 @@
 {
 	"name": "rundiz/thai-date",
 	"type": "library",
-	"description": "display date in Thai language use PHP date() and strftime()",
+	"description": "Display date in Thai language use PHP date() and strftime()",
 	"keywords": ["date", "Thai date", "thaidate", "date thai", "datethai", "date translation"],
 	"license": "MIT",
 	"authors": [
