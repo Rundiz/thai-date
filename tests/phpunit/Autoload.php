@@ -7,7 +7,7 @@
  */
 
 
-namespace Rundiz\SimpleCache\Tests;
+namespace Rundiz\Thaidate\Tests;
 
 /**
  * Copy from PSR-4
