@@ -3,7 +3,7 @@
 
 namespace Rundiz\Thaidate\Tests;
 
-class ThaidateTest extends \PHPUnit_Framework_TestCase
+class ThaidateTest extends \PHPUnit\Framework\TestCase
 {
 
 
