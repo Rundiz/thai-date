@@ -25,7 +25,7 @@ class Thaidate
 
     /**
      * Locale to use in setlocale() function. Some server support different locales, with .UTF8, or without .UTF8. Detect and use at your own.
-     * @var type 
+     * @var string|array See more about `$locale` parameter of `setlocale()` function at http://php.net/manual/en/function.setlocale.php .
      */
     public $locale = 'th';
 

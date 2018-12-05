@@ -33,7 +33,7 @@ function thaidate($format, $timestamp = '', $buddhist_era = true)
  * @param string $format The format as same as PHP date function format. See http://php.net/manual/en/function.strftime.php
  * @param integer $timestamp The optional timestamp is an integer Unix timestamp.
  * @param boolean $buddhist_era Use Buddhist era? set to true to use that or false not to use.
- * @param string $locale The locale that will be use in setlocale() function. See http://php.net/setlocale
+ * @param array|string $locale The locale that will be use in setlocale() function. See http://php.net/setlocale
  * @return string Return the formatted date/time string.
  */
 function thaistrftime($format, $timestamp = '', $buddhist_era = true, $locale = 'th')
