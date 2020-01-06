@@ -8,6 +8,9 @@ require dirname(dirname(__DIR__)).'/Rundiz/Thaidate/Thaidate.php';
 require dirname(dirname(__DIR__)).'/Rundiz/Thaidate/thaidate-functions.php';
 
 
+header('Content-Type: text/html; charset=UTF-8');
+echo '<meta charset="utf-8">' . PHP_EOL;
+
 echo 'Begin test thaidate();.'."<br>\n";
 echo 'time(); = '.time()."<br>\n";
 echo 'Current date/time use date(); = '.date('Y-m-d H:i:s')."<br>\n";

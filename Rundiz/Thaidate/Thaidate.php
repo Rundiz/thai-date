@@ -2,7 +2,7 @@
 /** 
  * 
  * @package Thaidate
- * @version 2.0.4
+ * @version 2.0.5
  * @author Vee W.
  * @license http://opensource.org/licenses/MIT
  * 
@@ -119,7 +119,29 @@ class Thaidate
 
         $converted_datetime = strftime($format, $timestamp);
         $detect_encoding = mb_detect_encoding($converted_datetime, mb_detect_order(), true);
-        return iconv($detect_encoding, 'UTF-8', $converted_datetime);
+        if ($detect_encoding === false) {
+            // if some server cannot detect encoding at all.
+            // in this case, i assume that the encoding from `strfime()` is thai (base on locale).
+            if (is_string($this->locale) && stripos($this->locale, 'th') !== false) {
+                $detect_encoding = 'TIS-620';
+            } elseif (is_array($this->locale)) {
+                foreach ($this->locale as $locale) {
+                    if (is_string($locale) && stripos($locale, 'th') !== false) {
+                        $detect_encoding = 'TIS-620';
+                        break;
+                    }
+                }// endforeach;
+                unset($locale);
+            }
+        }
+
+        if ($detect_encoding !== false) {
+            // if detect encoding with no problem.
+            return iconv($detect_encoding, 'UTF-8', $converted_datetime);
+        } else {
+            // if detect encoding found some problem, return as-is.
+            return $converted_datetime;
+        }
     }// strftime
 
 
