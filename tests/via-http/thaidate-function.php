@@ -13,8 +13,10 @@ echo '<meta charset="utf-8">' . PHP_EOL;
 
 echo 'Begin test thaidate();.'."<br>\n";
 echo 'time(); = '.time()."<br>\n";
-echo 'Current date/time use date(); = '.date('Y-m-d H:i:s')."<br>\n";
-echo 'Current date/time use strftime(); = '.strftime('%#d %A %B %Y')."<br>\n";
+echo 'Current date/time use date(); = ' . date('Y-m-d H:i:s')."<br>\n";
+if (function_exists('strftime')) {
+    echo 'Current date/time use strftime(); = ' . @strftime('%#d %A %B %Y')."<br>\n";
+}
 echo '----------------------------------'."<br>\n";
 echo 'Thai date test.'."<br>\n";
 echo '12 Months'."<br>\n";
