@@ -6,7 +6,10 @@ header('Content-Type: text/html; charset=UTF-8');
 
 
 if (version_compare(PHP_VERSION, '8.1', '>=')) {
-    echo '<div style="border-left: 5px solid #f00; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6); font-size: 1em; padding: 2px 5px;"><code>strftime()</code> is deprecated since PHP 8.1.</div>' . PHP_EOL;
+    echo '<div style="border-left: 5px solid #f00; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6); font-size: 1em; margin: 0 0 20px; padding: 2px 5px;"><code>strftime()</code> is deprecated since PHP 8.1.</div>' . PHP_EOL;
+}
+if (!function_exists('strftime')) {
+    die('<p><code>strftime()</code> function is not exists.<p>');
 }
 
 $locale = 'th';
