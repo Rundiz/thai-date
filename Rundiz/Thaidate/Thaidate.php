@@ -2,7 +2,7 @@
 /** 
  * 
  * @package Thaidate
- * @version 2.0.5
+ * @version 2.1.0
  * @author Vee W.
  * @license http://opensource.org/licenses/MIT
  * 
@@ -40,12 +40,12 @@ class Thaidate
      * Thai date() function.
      * 
      * @param string $format The format as same as PHP date function format. See http://php.net/manual/en/function.date.php
-     * @param integer $timestamp The optional timestamp is an integer Unix timestamp.
+     * @param int $timestamp The optional timestamp is an integer Unix timestamp.
      * @return string Return the formatted date/time string.
      */
     public function date($format, $timestamp = '')
     {
-        if ($timestamp == null) {
+        if (!is_numeric($timestamp)) {
             $timestamp = time();
         }
 
@@ -91,15 +91,58 @@ class Thaidate
 
 
     /**
+     * Thai date use `\IntlDateFormatter()` class.
+     * 
+     * @since 2.1.0
+     * @param string $format The format or pattern as **same** as ICU format. See https://unicode-org.github.io/icu/userguide/format_parse/datetime/
+     * @param int $timestamp
+     * @return string Return the formatted date/time string.
+     */
+    public function intlDate($format, $timestamp = '')
+    {
+        if (!is_numeric($timestamp)) {
+            $timestamp = time();
+        }
+
+        if ($this->buddhist_era === true) {
+            $calendar = \IntlDateFormatter::TRADITIONAL;
+        } else {
+            $calendar = null;
+        }
+        $locale = $this->locale;
+        if (is_array($this->locale)) {
+            $localeVals = array_values($locale);
+            $locale = array_shift($localeVals);
+            unset($localeVals);
+        } elseif (!is_scalar($this->locale)) {
+            $locale = 'th';
+        }
+        $IntlDateFormatter = new \IntlDateFormatter($locale, \IntlDateFormatter::FULL, \IntlDateFormatter::FULL, null, $calendar);
+        $IntlDateFormatter->setPattern($format);
+        return $IntlDateFormatter->format($timestamp);
+    }// intlDate
+
+
+    /**
      * Thai date use strftime() function.
      * 
+     * Function `strftime()` is deprecated since PHP 8.1. This method will be here to keep it working from old projects to new.<br>
+     * However, please validate the result that it really is correct once PHP removed this function in version 9.0.<br>
+     * Use other method instead of this is recommended.
+     * 
      * @param string $format The format as same as PHP date function format. See http://php.net/manual/en/function.strftime.php
-     * @param integer $timestamp The optional timestamp is an integer Unix timestamp.
+     * @param int $timestamp The optional timestamp is an integer Unix timestamp.
      * @return string Return the formatted date/time string.
      */
     public function strftime($format, $timestamp = '')
     {
-        if ($timestamp == null) {
+        if (!function_exists('strftime')) {
+            if (class_exists('\IntlDateFormatter')) {
+                return $this->intlDate($this->strftimeFormatToIntlDatePattern($format), $timestamp);
+            }
+        }
+
+        if (!is_numeric($timestamp)) {
             $timestamp = time();
         }
 
@@ -108,16 +151,16 @@ class Thaidate
         // if use Buddhist era, convert the year (y, Y).
         if ($this->buddhist_era === true) {
             if (mb_strpos($format, '%Y') !== false) {
-                $year = (strftime('%Y', $timestamp)+543);
+                $year = (@strftime('%Y', $timestamp)+543);
                 $format = str_replace('%Y', $year, $format);
             } elseif (mb_strpos($format, '%y') !== false) {
-                $year = (strftime('%y', $timestamp)+43);
+                $year = (@strftime('%y', $timestamp)+43);
                 $format = str_replace('%y', $year, $format);
             }
             unset($year);
         }
 
-        $converted_datetime = strftime($format, $timestamp);
+        $converted_datetime = @strftime($format, $timestamp);
         $detect_encoding = mb_detect_encoding($converted_datetime, mb_detect_order(), true);
         if ($detect_encoding === false) {
             // if some server cannot detect encoding at all.
@@ -143,6 +186,74 @@ class Thaidate
             return $converted_datetime;
         }
     }// strftime
+
+
+    /**
+     * Convert from `strftime()` format to `\IntlDateFormatter()` pattern.
+     * 
+     * There are no patterns that has no word 'วัน' from day of week.
+     * 
+     * @since 2.1.0
+     * @param string $format The date format that used by `strftime()` function.
+     * @return string Return converted format.
+     */
+    protected function strftimeFormatToIntlDatePattern($format)
+    {
+        $output = $format;
+
+        $replaces = array(
+            '%a' => 'E',
+            '%A' => 'EEEE',
+            '%d' => 'dd',
+            '%e' => 'd',
+            '%j' => 'D',
+            '%u' => 'e',// not 100% correct
+            '%w' => 'c',// not 100% correct
+            '%U' => 'w',
+            '%V' => 'ww',// not 100% correct
+            '%W' => 'w',// not 100% correct
+            '%b' => 'MMM',
+            '%B' => 'MMMM',
+            '%h' => 'MMM',// alias of %b
+            '%m' => 'MM',
+            '%C' => 'yy',// no replace for this
+            '%g' => 'yy',// no replace for this
+            '%G' => 'Y',// not 100% correct
+            '%y' => 'yy',
+            '%Y' => 'yyyy',
+            '%H' => 'HH',
+            '%k' => 'H',
+            '%I' => 'hh',
+            '%l' => 'h',
+            '%M' => 'mm',
+            '%p' => 'a',
+            '%P' => 'a',// no replace for this
+            '%r' => 'hh:mm:ss a',
+            '%R' => 'HH:mm',
+            '%S' => 'ss',
+            '%T' => 'HH:mm:ss',
+            '%X' => 'HH:mm:ss',// no replace for this
+            '%z' => 'ZZ',
+            '%Z' => 'v',// no replace for this
+            '%c' => 'd/M/YYYY HH:mm:ss',// Buddhist era may not converted.
+            '%D' => 'MM/dd/yy',
+            '%F' => 'yyyy-MM-dd',
+            '%s' => '',// no replace for this
+            '%x' => 'd/MM/yyyy',// Buddhist era may not converted.
+            '%n' => "\n",
+            '%t' => "\t",
+            '%%' => '%',
+        );
+
+        $output = preg_replace('/(%%[a-zA-Z])/u', "'$1'", $output);// escape %%x with '%%x'.
+        foreach ($replaces as $strftime => $intl) {
+            $output = preg_replace('/(?<!%)(' . $strftime . ')/u', $intl, $output);
+        }// endforeach;
+        unset($intl, $strftime);
+
+        unset($replaces);
+        return $output;
+    }// strftimeFormatToIntlDatePattern
 
 
 }
