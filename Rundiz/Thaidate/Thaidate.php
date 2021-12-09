@@ -246,6 +246,7 @@ class Thaidate
         );
 
         $output = preg_replace('/(%%[a-zA-Z])/u', "'$1'", $output);// escape %%x with '%%x'.
+        $output = preg_replace('/(?<!%)([a-zA-Z]+)/u', "'$1$2'", $output);// escape xx that has no % in the front.
         foreach ($replaces as $strftime => $intl) {
             $output = preg_replace('/(?<!%)(' . $strftime . ')/u', $intl, $output);
         }// endforeach;
