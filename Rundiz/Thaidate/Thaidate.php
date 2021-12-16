@@ -2,7 +2,7 @@
 /** 
  * 
  * @package Thaidate
- * @version 2.1.0
+ * @version 2.1.1
  * @author Vee W.
  * @license http://opensource.org/licenses/MIT
  * 
@@ -42,9 +42,14 @@ class Thaidate
      * @param string $format The format as same as PHP date function format. See http://php.net/manual/en/function.date.php
      * @param int $timestamp The optional timestamp is an integer Unix timestamp.
      * @return string Return the formatted date/time string.
+     * @throws \InvalidArgumentException Throw the exception if invalid argument type is specify.
      */
     public function date($format, $timestamp = '')
     {
+        if (!is_string($format)) {
+            throw new \InvalidArgumentException('The argument $format must be string.');
+        }
+
         if (!is_numeric($timestamp)) {
             $timestamp = time();
         }
@@ -94,12 +99,18 @@ class Thaidate
      * Thai date use `\IntlDateFormatter()` class.
      * 
      * @since 2.1.0
+     * @see https://www.php.net/manual/en/class.intldateformatter.php
      * @param string $format The format or pattern as **same** as ICU format. See https://unicode-org.github.io/icu/userguide/format_parse/datetime/
-     * @param int $timestamp
+     * @param int $timestamp The optional timestamp is an integer Unix timestamp.
      * @return string Return the formatted date/time string.
+     * @throws \InvalidArgumentException Throw the exception if invalid argument type is specify.
      */
     public function intlDate($format, $timestamp = '')
     {
+        if (!is_string($format)) {
+            throw new \InvalidArgumentException('The argument $format must be string.');
+        }
+
         if (!is_numeric($timestamp)) {
             $timestamp = time();
         }
@@ -134,23 +145,30 @@ class Thaidate
      * @param int $timestamp The optional timestamp is an integer Unix timestamp.
      * @return string Return the formatted date/time string.<br>
      *              This method will be show the notice if function `strftime()` is deprecated or removed from currently running PHP version.
+     * @throws \InvalidArgumentException Throw the exception if invalid argument type is specify.
      */
     public function strftime($format, $timestamp = '')
     {
         if (!function_exists('strftime') || version_compare(PHP_VERSION, '8.1', '>=')) {
+            // if function `strftime` is not exists or deprecated (since PHP 8.1).
             // notice the developers to upgrade their code.
             // this method can keep running with new version of PHP but need more attention about format/pattern.
             // so, use notice instead of warning, error, deprecated level.
             trigger_error(
                 'Function `strftime()` is deprecated 
                     and method `\Rundiz\Thaidate\Thaidate::strftime()` is using replacement which may return incorrect result.
-                    Please upgrade your code to use `\Rundiz\Thaidate\Thaidate::intlDate()` instead.', 
+                    Please update your code to use `\Rundiz\Thaidate\Thaidate::intlDate()` instead.', 
                 E_USER_NOTICE
             );
 
             if (class_exists('\IntlDateFormatter')) {
                 return $this->intlDate($this->strftimeFormatToIntlDatePattern($format), $timestamp);
             }
+            // if IntlDateFormatter is not exists then let it run and error occur.
+        }
+
+        if (!is_string($format)) {
+            throw new \InvalidArgumentException('The argument $format must be string.');
         }
 
         if (!is_numeric($timestamp)) {
@@ -200,11 +218,12 @@ class Thaidate
 
 
     /**
-     * Convert from `strftime()` format to `\IntlDateFormatter()` pattern.
+     * Convert from `strftime()` format to `\IntlDateFormatter()` that use ICU pattern.
      * 
      * There are no patterns that has no word 'วัน' from day of week.
      * 
      * @since 2.1.0
+     * @see https://unicode-org.github.io/icu/userguide/format_parse/datetime/ See more about ICU pattern.
      * @param string $format The date format that used by `strftime()` function.
      * @return string Return converted format.
      */
