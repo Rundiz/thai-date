@@ -40,6 +40,8 @@ class ThaidateTest extends \PHPUnit\Framework\TestCase
         } else {
             $this->assertEquals('พฤ. 14 เม.ย. 59', thaistrftime('%a %d %b %y', $timestamp, true, array('th', 'th_TH.utf8', 'th_TH.UTF8', 'th_TH.utf-8', 'th_TH.UTF-8', 'th_TH', 'th-TH')));
         }
+        $this->assertEquals('พฤ. 14 เม.ย. 59', thaiIntlDate('EE d MMM yy', $timestamp));
+        $this->assertEquals('วันพฤหัสบดี 14 เมษายน 2559', thaiIntlDate('EEEE d MMMM yyyy', $timestamp));// can't get rid of the word 'วัน' using pattern.
     }// testThaidate
 
 
