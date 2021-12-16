@@ -7,6 +7,29 @@ class ThaidateTest extends \PHPUnit\Framework\TestCase
 {
 
 
+    public function testStrftimeFormatToIntlDatePattern()
+    {
+        $Thaidate = new ThaidateExtended();
+        $this->assertSame('D', $Thaidate->strftimeFormatToIntlDatePattern('%j'));
+        $this->assertSame('EEEE @ dd MMMM yyyy HH:mm:ss', $Thaidate->strftimeFormatToIntlDatePattern('%A @ %d %B %Y %H:%M:%S'));
+        $this->assertSame('\'\' $"', $Thaidate->strftimeFormatToIntlDatePattern('\' $"'));
+        $this->assertSame('\'\' $', $Thaidate->strftimeFormatToIntlDatePattern('\'\' $'));
+        $this->assertSame('\'\'\' $', $Thaidate->strftimeFormatToIntlDatePattern('\'\'\' $'));
+        $this->assertSame('\'\'\'\' $', $Thaidate->strftimeFormatToIntlDatePattern('\'\'\'\' $'));
+        $this->assertSame('\'\' $', $Thaidate->strftimeFormatToIntlDatePattern('\' $'));
+        $this->assertSame('\'\'\'abc\'', $Thaidate->strftimeFormatToIntlDatePattern('\'abc'));
+        $this->assertSame('\'\'\'abc\'$', $Thaidate->strftimeFormatToIntlDatePattern('\'abc$'));// $ is not in range for ICU pattern.
+        $this->assertSame('\'xyz\'\'\'', $Thaidate->strftimeFormatToIntlDatePattern('xyz\''));
+        $this->assertSame('\'xyz\'\'\' $', $Thaidate->strftimeFormatToIntlDatePattern('xyz\' $'));
+        $this->assertSame('\'xyz\'\'\'$', $Thaidate->strftimeFormatToIntlDatePattern('xyz\'$'));
+        $this->assertSame('\'xyz\'\'\'$\'abc\'', $Thaidate->strftimeFormatToIntlDatePattern('xyz\'$abc'));
+        $this->assertSame('\'wrap\' \'me\'', $Thaidate->strftimeFormatToIntlDatePattern('wrap me'));
+        $this->assertSame('HH \'%H\' HH%', $Thaidate->strftimeFormatToIntlDatePattern('%H %%H %H%'));
+        $this->assertSame('EEEE dd MMMM yyyy HH:mm:ss "\'double\' \'quote\' \'\'\'single\' \'quote\'', $Thaidate->strftimeFormatToIntlDatePattern('%A %d %B %Y %H:%M:%S "double quote \'\'single quote'));
+        $this->assertSame('EEEE dd MMMM yyyy HH:mm:ss \'%S\'', $Thaidate->strftimeFormatToIntlDatePattern('%A %d %B %Y %H:%M:%S %%S'));
+    }// testStrftimeFormatToIntlDatePattern
+
+
     public function testThaidateFunctions()
     {
         $timestamp = 1460619637;
