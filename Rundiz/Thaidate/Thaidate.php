@@ -132,11 +132,22 @@ class Thaidate
      * 
      * @param string $format The format as same as PHP date function format. See http://php.net/manual/en/function.strftime.php
      * @param int $timestamp The optional timestamp is an integer Unix timestamp.
-     * @return string Return the formatted date/time string.
+     * @return string Return the formatted date/time string.<br>
+     *              This method will be show the notice if function `strftime()` is deprecated or removed from currently running PHP version.
      */
     public function strftime($format, $timestamp = '')
     {
-        if (!function_exists('strftime')) {
+        if (!function_exists('strftime') || version_compare(PHP_VERSION, '8.1', '>=')) {
+            // notice the developers to upgrade their code.
+            // this method can keep running with new version of PHP but need more attention about format/pattern.
+            // so, use notice instead of warning, error, deprecated level.
+            trigger_error(
+                'Function `strftime()` is deprecated 
+                    and method `\Rundiz\Thaidate\Thaidate::strftime()` is using replacement which may return incorrect result.
+                    Please upgrade your code to use `\Rundiz\Thaidate\Thaidate::intlDate()` instead.', 
+                E_USER_NOTICE
+            );
+
             if (class_exists('\IntlDateFormatter')) {
                 return $this->intlDate($this->strftimeFormatToIntlDatePattern($format), $timestamp);
             }
@@ -245,8 +256,25 @@ class Thaidate
             '%%' => '%',
         );
 
-        $output = preg_replace('/(%%[a-zA-Z])/u', "'$1'", $output);// escape %%x with '%%x'.
-        $output = preg_replace('/(?<!%)([a-zA-Z]+)/u', "'$1$2'", $output);// escape xx that has no % in the front.
+        // replace 1 single quote that is not following visible character or single quote and not follow by single quote or word or number.
+        // example: '
+        // replace with 2 single quotes. example: ''
+        $output = preg_replace('/(?<![\'\S])(\')(?![\'\w])/u', "'$1", $output);
+        // replace 1 single quote that is not following visible character or single quote and follow by word.
+        // example: 'xx
+        // replace with 2 single quotes. example: ''xx
+        $output = preg_replace('/(?<![\'\S])(\')(\w+)/u', "'$1$2", $output);
+        // replace 1 single quote that is following word (a-z 0-9) and not follow by single quote.
+        // example: xx'
+        // replace with 2 single quotes. example: xx''
+        $output = preg_replace('/([\w]+)(\')(?!\')/u', "$1'$2", $output);
+        // replace a-z (include upper case) that is not following %. example xxx.
+        // replace with wrap single quote. example: 'xxx'.
+        $output = preg_replace('/(?<![%a-zA-Z])([a-zA-Z]+)/u', "'$1$2'", $output);
+
+        // escape %%x with '%%x'.
+        $output = preg_replace('/(%%[a-zA-Z]+)/u', "'$1'", $output);
+
         foreach ($replaces as $strftime => $intl) {
             $output = preg_replace('/(?<!%)(' . $strftime . ')/u', $intl, $output);
         }// endforeach;
