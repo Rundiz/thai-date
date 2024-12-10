@@ -2,7 +2,7 @@
 /** 
  * 
  * @package Thaidate
- * @version 2.1.1
+ * @version 2.1.2
  * @author Vee W.
  * @license http://opensource.org/licenses/MIT
  * 
@@ -137,7 +137,7 @@ class Thaidate
     /**
      * Thai date use strftime() function.
      * 
-     * Function `strftime()` is deprecated since PHP 8.1. This method will be here to keep it working from old projects to new.<br>
+     * @deprecated (since 2.1.0) Function `strftime()` is deprecated since PHP 8.1. This method will be here to keep it working from old projects to new.<br>
      * However, please validate the result that it really is correct once PHP removed this function in version 9.0.<br>
      * Use other method instead of this is recommended.
      * 
