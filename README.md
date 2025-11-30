@@ -2,7 +2,7 @@
 
 Display date in Thai by using same PHP `date()` and `strftime()` function attributes.
 
-Tested up to PHP 8.4.
+Tested up to PHP 8.5.
 
 [![Latest Stable Version](https://poser.pugx.org/rundiz/thai-date/v/stable)](https://packagist.org/packages/rundiz/thai-date)
 [![License](https://poser.pugx.org/rundiz/thai-date/license)](https://packagist.org/packages/rundiz/thai-date)
