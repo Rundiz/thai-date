@@ -2,7 +2,7 @@
 /** 
  * 
  * @package Thaidate
- * @version 2.1.2
+ * @version 2.1.3
  * @author Vee W.
  * @license http://opensource.org/licenses/MIT
  * 
@@ -19,7 +19,7 @@ class Thaidate
 
     /**
      * Use Buddhist Era? (พ.ศ.)
-     * @var boolean Set to true to use or false not to use.
+     * @var bool Set to `true` to use or `false` not to use.
      */
     public $buddhist_era = true;
 

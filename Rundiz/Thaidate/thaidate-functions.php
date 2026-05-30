@@ -31,7 +31,7 @@ function thaidate($format, $timestamp = '', $buddhist_era = true)
  * Thai date use IntlDateFormatter() class.
  * 
  * @param string $format The format or pattern as **same** as ICU format. See https://unicode-org.github.io/icu/userguide/format_parse/datetime/
- * @param type $timestamp The optional timestamp is an integer Unix timestamp.
+ * @param int $timestamp The optional timestamp is an integer Unix timestamp.
  * @param bool $buddhist_era Use Buddhist era? set to true to use that or false not to use.
  * @param array|string $locale The locale that will be use in `IntlDateFormatter::__construct()` function. See https://www.php.net/manual/en/intldateformatter.create.php
  * @return string Return the formatted date/time string.
