@@ -26,13 +26,13 @@ $Thaidate->locale = 'th';
 echo 'Thai date test.'."<br>\n";
 echo '12 Months'."<br>\n";
 for ($i = 1; $i <= 12; $i++) {
-    echo $Thaidate->intlDate('cccc d MMMM yyyy', strtotime(date('Y').'-'.$i.'-01'))."<br>\n";
+    echo $Thaidate->intlDate('EEEE d MMMM yyyy', strtotime(date('Y').'-'.$i.'-01'))."<br>\n";
 }
 echo '---------------------'."<br>\n";
 echo '12 Months in short'."<br>\n";
 for ($i = 1; $i <= 12; $i++) {
-    echo $Thaidate->intlDate('ccc d MMM yyyy', strtotime(date('Y').'-'.$i.'-01'))."<br>\n";
+    echo $Thaidate->intlDate('E d MMM yyyy', strtotime(date('Y').'-'.$i.'-01'))."<br>\n";
 }
 echo '---------------------'."<br>\n";
 echo 'Full long date with time'."<br>\n";
-echo sprintf($Thaidate->intlDate('cccc\'%1$s\' d MMMM Gyyyy \'%2$s\'H:mm:ss'), 'ที่', 'เวลา')."<br>\n";
+echo sprintf($Thaidate->intlDate('EEEE\'%1$s\' d MMMM Gyyyy \'%2$s\'H:mm:ss'), 'ที่', 'เวลา')."<br>\n";
