@@ -100,26 +100,35 @@ class Thaidate
      * 
      * @since 2.1.0
      * @see https://www.php.net/manual/en/class.intldateformatter.php
-     * @param string $format The format or pattern as **same** as ICU format. See https://unicode-org.github.io/icu/userguide/format_parse/datetime/
+     * @see IntlDateFormatter::__construct() for accepted arguments.
+     * @param string $pattern The format or pattern as **same** as ICU format. See https://unicode-org.github.io/icu/userguide/format_parse/datetime/
      * @param int $timestamp The optional timestamp is an integer Unix timestamp.
+     * @param array $options The options:  
+     *      `timezone` IntlTimeZone|DateTimeZone|string|null Accept timezone the same as in `IntlDateFormatter::__construct`. This option is available since 2.1.4.  
      * @return string Return the formatted date/time string.
      * @throws \InvalidArgumentException Throw the exception if invalid argument type is specify.
      */
-    public function intlDate($format, $timestamp = '')
+    public function intlDate($pattern, $timestamp = '', $options = array())
     {
-        if (!is_string($format)) {
-            throw new \InvalidArgumentException('The argument $format must be string.');
+        if (!is_string($pattern)) {
+            throw new \InvalidArgumentException('The argument `$pattern` must be string.');
+        }
+        if (!is_array($options)) {
+            throw new \InvalidArgumentException('The argument `$options` must be array.');
+        }
+        if (array_key_exists('timezone', $options)) {
+            if (
+                !is_null($options['timezone']) && 
+                !is_string($options['timezone']) && 
+                !$options['timezone'] instanceof \DateTimeZone && 
+                !$options['timezone'] instanceof \IntlTimeZone
+            ) {
+                throw new \InvalidArgumentException('The argument option `$options[\'timezone\']` contain invalid type.');
+            } else {
+                $timezone = $options['timezone'];
+            }
         }
 
-        if (!is_numeric($timestamp)) {
-            $timestamp = time();
-        }
-
-        if ($this->buddhist_era === true) {
-            $calendar = \IntlDateFormatter::TRADITIONAL;
-        } else {
-            $calendar = null;
-        }
         $locale = $this->locale;
         if (is_array($this->locale)) {
             $localeVals = array_values($locale);
@@ -128,8 +137,26 @@ class Thaidate
         } elseif (!is_scalar($this->locale)) {
             $locale = 'th';
         }
-        $IntlDateFormatter = new \IntlDateFormatter($locale, \IntlDateFormatter::FULL, \IntlDateFormatter::FULL, null, $calendar);
-        $IntlDateFormatter->setPattern($format);
+        
+        $dateType = \IntlDateFormatter::FULL;
+        $timeType = $dateType;
+        
+        if (!isset($timezone)) {
+            $timezone = null;
+        }
+
+        if ($this->buddhist_era === true) {
+            $calendar = \IntlDateFormatter::TRADITIONAL;
+        } else {
+            $calendar = null;
+        }
+
+        if (!is_numeric($timestamp)) {
+            $timestamp = time();
+        }
+
+        $IntlDateFormatter = new \IntlDateFormatter($locale, $dateType, $timeType, $timezone, $calendar, $pattern);
+        unset($calendar, $dateType, $locale, $timeType, $timezone);
         return $IntlDateFormatter->format($timestamp);
     }// intlDate
 

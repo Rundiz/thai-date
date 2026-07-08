@@ -34,9 +34,11 @@ function thaidate($format, $timestamp = '', $buddhist_era = true)
  * @param int $timestamp The optional timestamp is an integer Unix timestamp.
  * @param bool $buddhist_era Use Buddhist era? set to true to use that or false not to use.
  * @param array|string $locale The locale that will be use in `IntlDateFormatter::__construct()` function. See https://www.php.net/manual/en/intldateformatter.create.php
+ * @param array $options The options:  
+ *      `timezone` IntlTimeZone|DateTimeZone|string|null Accept timezone the same as in `IntlDateFormatter::__construct`. This option is available since 2.1.4.  
  * @return string Return the formatted date/time string.
  */
-function thaiIntlDate($format, $timestamp = '', $buddhist_era = true, $locale = 'th')
+function thaiIntlDate($format, $timestamp = '', $buddhist_era = true, $locale = 'th', $options = array())
 {
     if ($locale == null) {
         $locale = 'th';
@@ -49,7 +51,7 @@ function thaiIntlDate($format, $timestamp = '', $buddhist_era = true, $locale = 
     $thaidate = new \Rundiz\Thaidate\Thaidate();
     $thaidate->buddhist_era = $buddhist_era;
     $thaidate->locale = $locale;
-    return $thaidate->intlDate($format, $timestamp);
+    return $thaidate->intlDate($format, $timestamp, $options);
 }// thaiIntlDate
 
 
