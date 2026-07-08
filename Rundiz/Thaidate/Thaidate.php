@@ -2,7 +2,7 @@
 /** 
  * 
  * @package Thaidate
- * @version 2.1.3
+ * @version 2.1.4
  * @author Vee W.
  * @license http://opensource.org/licenses/MIT
  * 
