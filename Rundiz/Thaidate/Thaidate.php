@@ -265,11 +265,11 @@ class Thaidate
             '%X' => 'HH:mm:ss',// no replace for this
             '%z' => 'ZZ',
             '%Z' => 'v',// no replace for this
-            '%c' => 'd/M/YYYY HH:mm:ss',// Buddhist era may not converted.
+            '%c' => 'd/M/yyyy HH:mm:ss',// original `strftime('%c')` show Buddhist era if locale is Thai. The `yyyy` also return Buddhist era IF locale and `$calendar` argument of `IntlDateFormatter()` are supported.`
             '%D' => 'MM/dd/yy',
             '%F' => 'yyyy-MM-dd',
             '%s' => '',// no replace for this
-            '%x' => 'd/MM/yyyy',// Buddhist era may not converted.
+            '%x' => 'd/MM/yyyy',// Buddhist era is supported.
             '%n' => "\n",
             '%t' => "\t",
             '%%' => '%',
