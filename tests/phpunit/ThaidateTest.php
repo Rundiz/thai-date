@@ -5,6 +5,12 @@ namespace Rundiz\Thaidate\Tests;
 
 class ThaidateTest extends \PHPUnit\Framework\TestCase
 {
+    
+    
+    public function setup(): void
+    {
+        date_default_timezone_set('Asia/Bangkok');
+    }// setup
 
 
     public function testStrftimeFormatToIntlDatePattern()
@@ -58,6 +64,31 @@ class ThaidateTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('พฤ. 14 เม.ย. 59', $Thaidate->intlDate('EE d MMM yy', $timestamp));
         $this->assertEquals('วันพฤหัสบดี 14 เมษายน 2559', $Thaidate->intlDate('EEEE d MMMM yyyy', $timestamp));// can't get rid of the word 'วัน' using pattern.
     }// testThaidateClass
+    
+    
+    public function testThaiIntlDate()
+    {
+        $timestamp = 1460619637;
+        $Thaidate = new \Rundiz\Thaidate\Thaidate();
+        if (version_compare(PHP_VERSION, '5.4.0', '>=') && version_compare(PHP_VERSION, '5.5.0', '<') && stripos(PHP_OS, 'WIN') === 0) {
+            $Thaidate->locale = 'Thai';
+        } else {
+            $Thaidate->locale = array('th', 'th_TH.utf8', 'th_TH.UTF8', 'th_TH.utf-8', 'th_TH.UTF-8', 'th_TH', 'th-TH');
+        }
+        
+        $this->assertEquals('พฤ. 14 เม.ย. 59', $Thaidate->intlDate('EE d MMM yy', $timestamp, array('timezone' => 'Asia/Bangkok')));
+        $this->assertEquals('พฤ. 14 เม.ย. 59', $Thaidate->intlDate('EE d MMM yy', $timestamp, array('timezone' => new \DateTimeZone('Asia/Bangkok'))));
+        $this->assertEquals('พฤ. 14 เม.ย. 59', $Thaidate->intlDate('EE d MMM yy', $timestamp, array('timezone' => \IntlTimeZone::createTimeZone('Asia/Bangkok'))));
+        $this->assertEquals('พฤ. 14 เม.ย. 59', $Thaidate->intlDate('EE d MMM yy', $timestamp, array('timezone' => null)));
+        
+        date_default_timezone_set('UTC');
+        $this->assertEquals('พฤ. 14 เม.ย. 59 +00:00', $Thaidate->intlDate('EE d MMM yy xxxxx', $timestamp, array('timezone' => null)));
+        $this->assertEquals('พฤ. 14 เม.ย. 59 +07:00', $Thaidate->intlDate('EE d MMM yy xxxxx', $timestamp, array('timezone' => 'Asia/Bangkok')));
+        $this->assertEquals('พฤ. 14 เม.ย. 59 +07:00', $Thaidate->intlDate('EE d MMM yy xxxxx', $timestamp, array('timezone' => new \DateTimeZone('Asia/Bangkok'))));
+        $this->assertEquals('พฤ. 14 เม.ย. 59 +07:00', $Thaidate->intlDate('EE d MMM yy xxxxx', $timestamp, array('timezone' => \IntlTimeZone::createTimeZone('Asia/Bangkok'))));
+        date_default_timezone_set('Asia/Bangkok');
+        $this->assertEquals('พฤ. 14 เม.ย. 59 +07:00', $Thaidate->intlDate('EE d MMM yy xxxxx', $timestamp, array('timezone' => null)));
+    }// testThaiIntlDate
 
 
 }
